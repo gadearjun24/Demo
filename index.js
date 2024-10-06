@@ -99,6 +99,25 @@ app.post('/', (req, res) => {
 
 
 
+// Endpoint to delete a user by ID
+app.delete('/:id', (req, res) => {
+  const userId = req.params.id;
+
+  const deleteStmt = db.prepare(`DELETE FROM users WHERE id = ?`);
+  deleteStmt.run(userId, function(err) {
+    if (err) {
+      console.error('Error deleting user: ' + err.message);
+      return res.status(500).json({ error: 'Error deleting user' });
+    }
+    if (this.changes === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.status(200).json({ message: 'User deleted successfully' });
+  });
+  deleteStmt.finalize();
+});
+
+
 
 
 
