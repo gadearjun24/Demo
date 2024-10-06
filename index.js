@@ -74,6 +74,38 @@ app.get('/', (req, res) => {
   });
 });
 
+
+
+
+
+app.post('/', (req, res) => {
+  const { name, email } = req.body;
+
+  if (!name || !email) {
+    return res.status(400).json({ error: 'Name and email are required' });
+  }
+
+  const insert = db.prepare(`INSERT INTO users (name, email) VALUES (?, ?)`);
+  insert.run(name, email, function(err) {
+    if (err) {
+      console.error('Error inserting data: ' + err.message);
+      res.status(500).json({ error: 'Error inserting data' });
+    } else {
+      res.status(201).json({ id: this.lastID, name, email });
+    }
+  });
+  insert.finalize();
+});
+
+
+
+
+
+
+
+
+
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
